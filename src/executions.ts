@@ -76,15 +76,15 @@ export const runTestCase = (
         );
     });
 
-    const begin = Date.now();
+    const begin = performance.now();
     const ret: Promise<Run> = new Promise((resolve) => {
         runningBinaries.push(process);
         process.on('exit', (code, signal) => {
-            const end = Date.now();
+            const end = performance.now();
             clearTimeout(killer);
             result.code = code;
             result.signal = signal;
-            result.time = end - begin;
+            result.time = Math.round(end - begin);
             runningBinaries.pop();
             console.log('Run Result:', result);
             resolve(result);
@@ -104,11 +104,11 @@ export const runTestCase = (
 
         process.stdin.end();
         process.on('error', (err) => {
-            const end = Date.now();
+            const end = performance.now();
             clearTimeout(killer);
             result.code = 1;
             result.signal = err.name;
-            result.time = end - begin;
+            result.time = Math.round(end - begin);
             runningBinaries.pop();
             console.log('Run Error Result:', result);
             resolve(result);

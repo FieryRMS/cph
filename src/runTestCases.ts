@@ -2,10 +2,12 @@ import * as vscode from 'vscode';
 import { checkUnsupported, randomId } from './utils';
 import { Problem } from './types';
 import { getProblem, saveProblem } from './parser';
-import { compileFile } from './compiler';
+// import { compileFile } from './compiler';
 import runAllAndSave from './webview/processRunAll';
 import path from 'path';
 import { getJudgeViewProvider } from './extension';
+import { getBinSaveLocation } from './compiler';
+import * as fs from 'fs';
 
 /**
  * Execution for the run testcases command. Runs all testcases for the active
@@ -13,7 +15,7 @@ import { getJudgeViewProvider } from './extension';
  * option to the user to either download them from a codeforces URL or manually
  * create an empty testcases file and show it in the results section.
  */
-export default async () => {
+export default async (skipCompile = false) => {
     console.log('Running command "runTestCases"');
     const editor = vscode.window.activeTextEditor;
     if (editor === undefined) {
@@ -25,6 +27,11 @@ export default async () => {
         return;
     }
 
+    if (skipCompile && !fs.existsSync(getBinSaveLocation(srcPath))) {
+        vscode.window.showErrorMessage(`Could not find the executable!`);
+        return;
+    }
+
     const problem = getProblem(srcPath);
 
     if (!problem) {
@@ -33,19 +40,19 @@ export default async () => {
         return;
     }
 
-    const didCompile = await compileFile(srcPath);
+    // const didCompile = await compileFile(srcPath);
 
-    if (!didCompile) {
-        console.error('Could not compile', srcPath);
-        return;
-    }
+    // if (!didCompile) {
+    //     console.error('Could not compile', srcPath);
+    //     return;
+    // }
     await editor.document.save();
     getJudgeViewProvider().focus();
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem: problem,
     });
-    runAllAndSave(problem);
+    runAllAndSave(problem, skipCompile);
     vscode.window.showTextDocument(editor.document, vscode.ViewColumn.One);
 };
 

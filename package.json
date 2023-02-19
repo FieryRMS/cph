@@ -232,16 +232,30 @@
                     "description": "Automatically show the judge view when opening a file that has a problem associated with it"
                 }
             }
-        }
+        },
+        "taskDefinitions": [
+            {
+                "type": "cphbuild",
+                "required": [
+                    "label"
+                ],
+                "properties": {
+                    "label": {
+                        "type": "string",
+                        "description": "must be c++"
+                    }
+                }
+            }
+        ]
     },
     "scripts": {
-        "webpack-production": "webpack --mode production",
-        "webpack-frontend-production": "webpack --mode production --config ./webpack.frontend.config.js",
+        "webpack-production": "set NODE_OPTIONS=--openssl-legacy-provider && webpack --mode production",
+        "webpack-frontend-production": "set NODE_OPTIONS=--openssl-legacy-provider && webpack --mode production --config ./webpack.frontend.config.js",
         "vscode:prepublish": "npm run webpack-frontend-production && npm run webpack-production",
-        "prewebpack": "webpack --mode development --config ./webpack.frontend.config.js",
-        "webpack": "webpack --mode development",
-        "webpack-dev": "webpack --mode development --watch",
-        "webpack-frontend-dev": "webpack --mode development --watch --config ./webpack.frontend.config.js",
+        "prewebpack": "set NODE_OPTIONS=--openssl-legacy-provider && webpack --mode development --config ./webpack.frontend.config.js",
+        "webpack": "set NODE_OPTIONS=--openssl-legacy-provider && webpack --mode development",
+        "webpack-dev": "set NODE_OPTIONS=--openssl-legacy-provider && webpack --mode development --watch",
+        "webpack-frontend-dev": "set NODE_OPTIONS=--openssl-legacy-provider && webpack --mode development --watch --config ./webpack.frontend.config.js",
         "test-compile": "tsc -p ./",
         "lint": "eslint . --ext .ts,.tsx",
         "pretest": "tsc -p ./",

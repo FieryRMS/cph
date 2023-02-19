@@ -50,7 +50,7 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
         vscode.commands.executeCommand('cph.judgeView.focus');
     }
 
-    console.log('Sent problem @', Date.now());
+    console.log('Sent problem @', performance.now());
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem,

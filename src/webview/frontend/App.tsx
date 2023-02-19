@@ -127,7 +127,7 @@ function Judge(props: {
 
     // Create a new Case
     const newCase = () => {
-        const id = Date.now();
+        const id = performance.now();
         const testCase: TestCase = {
             id,
             input: '',

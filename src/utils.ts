@@ -111,7 +111,8 @@ export const ocHide = () => {
     oc.hide();
 };
 
-export const randomId = () => Math.floor(Date.now() + Math.random() * 100);
+export const randomId = () =>
+    Math.floor(performance.now() + Math.random() * 100);
 
 /**
  * Check if file is supported. If not, shows an error dialog. Returns true if

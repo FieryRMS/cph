@@ -35,7 +35,7 @@ export const isResultCorrect = (
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getBlankCase = (_problem: Problem): Case => {
-    const id = Date.now();
+    const id = performance.now();
     return {
         id,
         result: null,

@@ -13,6 +13,13 @@ import {
 } from '../preferences';
 import { setOnlineJudgeEnv } from '../compiler';
 
+vscode.tasks.onDidEndTask((e) => {
+    console.log(e.execution.task);
+    if (e.execution.task.name == 'C/C++: g++.exe build active file') {
+        runTestCases(true);
+    }
+});
+
 class JudgeViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'cph.judgeView';
 
