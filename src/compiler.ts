@@ -2,10 +2,13 @@ import { getLanguage, ocHide, ocShow, ocWrite } from './utils';
 import { Language } from './types';
 import { spawn } from 'child_process';
 import path from 'path';
-import { getSaveLocationPref } from './preferences';
+import {
+    getSaveLocationPref,
+    getZeroExitCodeIsWarningPref,
+} from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
-let onlineJudgeEnv = false;
+export let onlineJudgeEnv = false;
 
 export const setOnlineJudgeEnv = (value: boolean) => {
     onlineJudgeEnv = value;
@@ -81,13 +84,19 @@ const getFlags = (language: Language, srcPath: string): string[] => {
             ret = [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
             break;
         }
+        case 'go': {
+            ret = [
+                'build',
+                '-o',
+                getBinSaveLocation(srcPath),
+                srcPath,
+                ...args,
+            ];
+            break;
+        }
         case 'java': {
             const binDir = path.dirname(getBinSaveLocation(srcPath));
             ret = [srcPath, '-d', binDir, ...args];
-            if (onlineJudgeEnv) {
-                ret.push('-D');
-                ret.push('ONLINE_JUDGE');
-            }
             break;
         }
         default: {
@@ -155,7 +164,10 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
         });
 
         compiler.on('exit', (exitcode) => {
-            if (exitcode === 1 || error !== '') {
+            if (
+                (!getZeroExitCodeIsWarningPref() || exitcode !== 0) &&
+                (exitcode === 1 || error !== '')
+            ) {
                 ocWrite('Errors while compiling:\n' + error);
                 ocShow();
                 console.error('Compilation failed');
@@ -167,6 +179,13 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
                     command: 'not-running',
                 });
                 return;
+            } else if (
+                getZeroExitCodeIsWarningPref() &&
+                exitcode === 0 &&
+                error !== ''
+            ) {
+                ocWrite('Warnings while compiling:\n' + error);
+                ocShow();
             }
             console.log('Compilation passed');
             getJudgeViewProvider().extensionToJudgeViewMessage({
