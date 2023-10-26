@@ -31,6 +31,8 @@ export const getSaveLocationPref = (): string => {
     }
     return pref;
 };
+export const getDeleteAfterRunPref = (): string =>
+    getPreference('general.deleteAfterRun');
 
 export const getZeroExitCodeIsWarningPref = (): string =>
     getPreference('general.zeroExitCodeIsWarning');

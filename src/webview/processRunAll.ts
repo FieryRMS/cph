@@ -4,6 +4,7 @@ import { compileFile, getBinSaveLocation } from '../compiler';
 import { deleteBinary } from '../executions';
 import { getLanguage } from '../utils';
 import { getJudgeViewProvider } from '../extension';
+import { getDeleteAfterRunPref } from '../preferences';
 
 /**
  * Run every testcase in a problem one by one. Waits for the first to complete
@@ -27,8 +28,9 @@ export default async (problem: Problem, skipCompile = false) => {
     }
     await Promise.all(PromiseList);
     console.log('Run all finished');
-    deleteBinary(
-        getLanguage(problem.srcPath),
-        getBinSaveLocation(problem.srcPath),
-    );
+    if (getDeleteAfterRunPref())
+        deleteBinary(
+            getLanguage(problem.srcPath),
+            getBinSaveLocation(problem.srcPath),
+        );
 };
